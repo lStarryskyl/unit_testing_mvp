@@ -32,7 +32,7 @@ Population: `data/apps_hard.json`, which contains 20 training and 30 held-out ta
 
 Common settings:
 
-- trusted model: exact provider identifier recorded in each run; planned model is `openrouter/z-ai/glm-5.2`;
+- trusted model: exact provider identifier recorded in each run; planned model is `openrouter/z-ai/glm-5.2:free`;
 - one completion per candidate, seed 300, temperature 0;
 - reasoning `high`, maximum 32,000 output tokens (the OpenRouter GLM-5.2 route supports `high`/`xhigh`, and the local runtime represents the preregistered choice as `high`);
 - candidate code visible;
@@ -88,4 +88,6 @@ The native OpenRouter provider setup is:
 OPENROUTER_API_KEY=<your-new-openrouter-key>
 ```
 
-The model name for the planned run is `openrouter/z-ai/glm-5.2`. GLM-5.3 is a later, separately named comparison rather than a silent model replacement. The full run must also execute on Linux/WSL with Docker and `tmux`: the repository's detached launcher is Unix-native, and its sandbox harness uses Unix `SIGALRM`.
+The model name for the planned run is `openrouter/z-ai/glm-5.2:free`. GLM-5.3 is a later, separately named comparison rather than a silent model replacement. The full run must also execute on Linux/WSL with Docker and `tmux`: the repository's detached launcher is Unix-native, and its sandbox harness uses Unix `SIGALRM`.
+
+The 2026-09-04 endpoint preflight authenticated successfully and confirmed that both model routes exist. Two minimal calls to the free GLM-5.2 route returned HTTP 429 from the upstream provider. This is an availability diagnostic, not an experiment result; the smoke run must still complete before full scoring begins.
