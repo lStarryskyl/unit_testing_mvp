@@ -32,7 +32,7 @@ Population: `data/apps_hard.json`, which contains 20 training and 30 held-out ta
 
 Common settings:
 
-- trusted model: exact provider identifier recorded in each run; planned model is `openai/glm-5.2`;
+- trusted model: exact provider identifier recorded in each run; planned model is `openrouter/z-ai/glm-5.2`;
 - one completion per candidate, seed 300, temperature 0;
 - reasoning `low`, maximum 32,000 output tokens;
 - candidate code visible;
@@ -80,13 +80,12 @@ This follow-up is only interpretable after the frozen single-turn comparison, be
 
 ## Execution status and prerequisites
 
-The Exa credential from the prior Codex task was validated and used only to discover and inspect public sources. It is not a model credential. No GLM/Z.AI credential is currently present in this workspace environment.
+The Exa credential from the prior Codex task was validated and used only to discover and inspect public sources. It is not a model credential. No OpenRouter credential is currently present in this workspace environment.
 
-The official Z.AI OpenAI-compatible setup is:
+The native OpenRouter provider setup is:
 
 ```dotenv
-OPENAI_API_KEY=<your-zai-key>
-OPENAI_BASE_URL=https://api.z.ai/api/paas/v4/
+OPENROUTER_API_KEY=<your-new-openrouter-key>
 ```
 
-The model name for the planned run is `openai/glm-5.2`. The full run must also execute on Linux/WSL with Docker and `tmux`: the repository's detached launcher is Unix-native, and its sandbox harness uses Unix `SIGALRM`.
+The model name for the planned run is `openrouter/z-ai/glm-5.2`. GLM-5.3 is a later, separately named comparison rather than a silent model replacement. The full run must also execute on Linux/WSL with Docker and `tmux`: the repository's detached launcher is Unix-native, and its sandbox harness uses Unix `SIGALRM`.

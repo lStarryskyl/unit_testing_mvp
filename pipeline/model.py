@@ -3,6 +3,7 @@
 Model strings are inspect_ai's:
 
   - ``openai-api/azureai/<deployment>``  Azure AI Foundry; reads AZUREAI_BASE_URL + AZUREAI_API_KEY
+  - ``openrouter/<publisher>/<model>``   OpenRouter; reads OPENROUTER_API_KEY
   - ``openai/...`` / ``anthropic/...``   any provider inspect_ai supports
   - ``mockllm/...`` or ``mock``          offline canned responses (tests / smoke runs)
 """
