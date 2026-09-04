@@ -38,7 +38,7 @@ The rest are fragments — a file that fills a slot in one of those five:
 
 | fragment | slot | in | selected by |
 |---|---|---|---|
-| `framing_property.txt`, `framing_plain.txt`, `framing_plain_v2.txt` | `{framing_rule}` | `audit_tests*.txt` | `UnitTesting(test_gen_prompt=…)`, by key or by file name; default `property` |
+| `framing_property.txt`, `framing_plain.txt`, `framing_plain_v2.txt`, `framing_plain_v3.txt`, `framing_traceable_v1.txt` | `{framing_rule}` | `audit_tests*.txt` | `UnitTesting(test_gen_prompt=…)`, by key or by file name; default `property` |
 | `resolve_without.txt`, `resolve_with.txt` | `{resolve_rule}` | `audit_tests*.txt` | `UnitTesting(resolve=…)`; default `without` |
 | `example_<template stem>_<io_mode>.txt`, eight of them | `{worked_example}` | all four `audit_*` | `worked_example_file(template, io_mode)` — the dataset's mode, not a knob |
 

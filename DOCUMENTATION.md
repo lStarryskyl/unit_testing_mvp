@@ -188,7 +188,7 @@ candidate's trigger inputs in Docker.
 | | |
 |---|---|
 | `triggers` | **required** — the name of a finished `TriggerSearch` run. Resolved in `prepare`, which raises if any candidate lacks a usable space, before the first model call. |
-| `test_gen_prompt="property"` | framing: `property`, `plain`, `plain_v2`. The file name (`framing_plain_v2.txt`) is accepted too. |
+| `test_gen_prompt="property"` | framing: `property`, `plain`, `plain_v2`, `plain_v3`, `traceable_v1`. The corresponding file name is accepted too. `traceable_v1` adds an explicit requirements/technique/oracle/validity review to the strongest existing prompt. |
 | `resolve="without"` | may a test compute the correct answer itself? `without` bans it, `with` allows it. (`forbidden`/`allowed` are the old spellings.) |
 | `code_visible=True` | does the test writer see the submission, or only the specification? |
 | `n_tests=10` | suite size; `n_tests × len(inputs)` is the execution grid. |

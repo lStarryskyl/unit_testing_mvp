@@ -82,6 +82,7 @@ FRAMING_RULE_FILES = {
     "plain": "framing_plain.txt",
     "plain_v2": "framing_plain_v2.txt",
     "plain_v3": "framing_plain_v3.txt",
+    "traceable_v1": "framing_traceable_v1.txt",
 }
 
 NO_PROVIDED_TESTS = "(none provided)"

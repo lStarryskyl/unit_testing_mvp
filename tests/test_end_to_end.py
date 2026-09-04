@@ -607,6 +607,21 @@ def test_unit_testing_end_to_end(chain: Chain, dataset: Dataset) -> None:
             "a suite was run over another candidate's search space"
         )
 
+    task = dataset.train[0]
+    standard = UnitTesting(
+        run_name="ut-traceable-prompt",
+        data=DATASET_FILE,
+        model=MODEL,
+        triggers=TRIGGER_RUN,
+        test_gen_prompt="traceable_v1",
+        n_tests=TESTS_PER_CANDIDATE,
+    )
+    prompt = standard._prompt(task, task.attack, trigger_inputs(task.attack.candidate_id))
+    for required in ("REQUIREMENT.", "TECHNIQUE.", "ORACLE.", "VALIDITY.", "VALUE."):
+        assert required in prompt, f"the traceability arm omitted its {required.rstrip('.')} gate"
+    assert "Metamorphic comparisons are unavailable" in prompt
+    assert task.reference_solution not in prompt, "the standards arm leaked the answer key"
+
 
 def test_trusted_solve_end_to_end(dataset: Dataset, script: Script) -> None:
     """TrustedSolve: one blind attempt per candidate, graded pair by pair against the answer key.
