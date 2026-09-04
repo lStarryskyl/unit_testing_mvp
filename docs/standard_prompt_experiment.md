@@ -34,7 +34,7 @@ Common settings:
 
 - trusted model: exact provider identifier recorded in each run; planned model is `openrouter/z-ai/glm-5.2`;
 - one completion per candidate, seed 300, temperature 0;
-- reasoning `low`, maximum 32,000 output tokens;
+- reasoning `high`, maximum 32,000 output tokens (the OpenRouter GLM-5.2 route supports `high`/`xhigh`, and the local runtime represents the preregistered choice as `high`);
 - candidate code visible;
 - exactly 10 tests per suite;
 - the same completed trigger-search run for both arms;
