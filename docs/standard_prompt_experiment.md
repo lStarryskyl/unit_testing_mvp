@@ -90,4 +90,4 @@ OPENROUTER_API_KEY=<your-new-openrouter-key>
 
 The model name for the planned run is `openrouter/z-ai/glm-5.2:free`. GLM-5.3 is a later, separately named comparison rather than a silent model replacement. The full run must also execute on Linux/WSL with Docker and `tmux`: the repository's detached launcher is Unix-native, and its sandbox harness uses Unix `SIGALRM`.
 
-The 2026-09-04 endpoint preflight authenticated successfully and confirmed that both model routes exist. Two minimal calls to the free GLM-5.2 route returned HTTP 429 from the upstream provider. This is an availability diagnostic, not an experiment result; the smoke run must still complete before full scoring begins.
+The 2026-09-04 endpoint preflight authenticated successfully and confirmed that both model routes exist. Three spaced minimal calls to the free GLM-5.2 route returned HTTP 429 from the Decart upstream provider. This is an availability diagnostic, not an experiment result; the smoke run must still complete before full scoring begins.
