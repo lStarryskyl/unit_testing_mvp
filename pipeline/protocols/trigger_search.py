@@ -156,6 +156,7 @@ def call_record(
         "raw": completion.text,
         "reasoning": completion.reasoning,
         "stop_reason": completion.stop_reason,
+        **completion.provenance(),
         "blame": blame,
         "reason": reason,
     }

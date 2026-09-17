@@ -67,6 +67,18 @@ class Completion:
     text: str = ""
     stop_reason: str = NEVER_RETURNED
     reasoning: str = ""
+    usage: dict[str, Any] | None = None
+    response_model: str | None = None
+    response_id: str | None = None
+
+    def provenance(self) -> dict[str, Any]:
+        """Inspect response metadata, possibly cached; not a fresh-call billing ledger.
+
+        Input tokens exclude cache reads; output tokens include reasoning tokens. Missing
+        provider metadata stays None, including IDs not exposed by the Inspect adapter.
+        """
+        return {"usage": self.usage, "response_model": self.response_model,
+                "response_id": self.response_id}
 
 
 def _reasoning(out: Any) -> str:
@@ -128,7 +140,14 @@ class TrustedModel:
         if self._model is None:
             from inspect_ai.model import get_model
 
-            self._model = get_model(self.runtime.name, config=self._gen_config())
+            provider_args = (
+                {"client_timeout": self.runtime.attempt_timeout}
+                if self.runtime.name.startswith("openai-api/")
+                else {}
+            )
+            self._model = get_model(
+                self.runtime.name, config=self._gen_config(), **provider_args
+            )
         return self._model
 
     async def complete(self, prompt: str, kind: str) -> str:
@@ -150,10 +169,16 @@ class TrustedModel:
         out = await self._resolve_inspect().generate(
             [ChatMessageUser(content=prompt)], cache=self.runtime.inspect_cache, config=config
         )
+        metadata = {
+            "usage": out.usage.model_dump(mode="json", exclude_unset=True)
+            if out.usage is not None else None,
+            "response_model": out.model if out.model else None,
+            "response_id": out.metadata.get("id") if out.metadata is not None else None,
+        }
         if out.empty:
-            return Completion("", EMPTY_RESPONSE_STOP_REASON, reasoning=_reasoning(out))
+            return Completion("", EMPTY_RESPONSE_STOP_REASON, reasoning=_reasoning(out), **metadata)
         return Completion(
-            out.completion or out.message.text, out.stop_reason, reasoning=_reasoning(out)
+            out.completion or out.message.text, out.stop_reason, reasoning=_reasoning(out), **metadata
         )
 
 

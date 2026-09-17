@@ -397,6 +397,7 @@ def _call(prompt: str, completion: Any) -> dict[str, Any]:
         "raw": completion.text,
         "reasoning": completion.reasoning,
         "stop_reason": completion.stop_reason,
+        **completion.provenance(),
     }
 
 

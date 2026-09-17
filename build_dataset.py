@@ -22,6 +22,7 @@ import argparse
 import ast
 import doctest
 import io
+import hashlib
 import json
 import re
 import tokenize
@@ -415,7 +416,35 @@ def _pool_entry(row: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def write_pool(n_tasks: int, seed: int, out: Path, difficulty: str = ANY_DIFFICULTY) -> None:
+def pool_provenance(revision: str | None, exclude_pools: tuple[Path, ...]) -> tuple[set[str], dict]:
+    """Validate optional immutable revision and exclusion files before touching the network."""
+    if revision is not None and not re.fullmatch('[0-9a-f]{40}', revision):
+        raise ValueError('explicit HF revision must be an immutable 40-character lowercase commit SHA')
+    excluded, files = set(), []
+    for path in exclude_pools:
+        raw = path.read_bytes()
+        pool = read_pool(path)
+        if 'candidates' in pool and 'tasks' not in pool:
+            if pool.get('schema_version') != POOL_SCHEMA_VERSION or not isinstance(pool['candidates'], dict):
+                raise ValueError(f'invalid exclusion pool schema: {path}')
+            ids = {str(task_id) for task_id in pool['candidates']}
+        elif 'tasks' in pool and 'candidates' not in pool:
+            if pool.get('schema_version') != SCHEMA_VERSION:
+                raise ValueError(f'invalid exclusion dataset schema: {path}')
+            dataset = Dataset.load(path)
+            ids = {task.task_id for task in dataset.tasks}
+            if len(ids) != len(dataset.tasks):
+                raise ValueError(f'duplicate exclusion dataset task IDs: {path}')
+        else:
+            raise ValueError(f'exclusion file must be one canonical pool or dataset schema: {path}')
+        excluded.update(ids)
+        files.append({'path':str(path), 'sha256':hashlib.sha256(raw).hexdigest(), 'task_count':len(ids)})
+    return excluded, {'hf_revision':revision, 'exclude_pools':files,
+                      'excluded_task_count':len(excluded), 'excluded_task_ids':sorted(excluded)}
+
+
+def write_pool(n_tasks: int, seed: int, out: Path, difficulty: str = ANY_DIFFICULTY,
+               *, revision: str | None = None, exclude_pools: tuple[Path, ...] = ()) -> None:
     """Sample `n_tasks` usable tasks UNIFORMLY from the source, and write them as a pool.
 
     `apps_pool_hard.json` took competition tier first, which is why every task in it is competition
@@ -429,11 +458,15 @@ def write_pool(n_tasks: int, seed: int, out: Path, difficulty: str = ANY_DIFFICU
     """
     from datasets import load_dataset
 
-    source = load_dataset(APPS_SOURCE, split="train")
+    if type(n_tasks) is not int or n_tasks <= 0:
+        raise ValueError('pool size must be a positive integer')
+    excluded, provenance = pool_provenance(revision, exclude_pools)
+    source = load_dataset(APPS_SOURCE, split="train", **({} if revision is None else {'revision':revision}))
     usable = [
         row
         for row in source
-        if row["solution_compiles"]
+        if str(row['problem_id']) not in excluded
+        and row["solution_compiles"]
         and row["solution_passes_tests"]
         and not row["is_nondeterministic"]
         and (difficulty == ANY_DIFFICULTY or row["difficulty"] == difficulty)
@@ -458,6 +491,8 @@ def write_pool(n_tasks: int, seed: int, out: Path, difficulty: str = ANY_DIFFICU
         ),
         "source": APPS_SOURCE,
     }
+    if revision is not None or exclude_pools:
+        document['sampling_provenance'] = provenance
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(document, indent=1) + "\n", encoding="utf-8")
     mix = sorted(Counter(row["difficulty"] for row in drawn).items())
@@ -635,6 +670,7 @@ def build(
             "candidate_code": SCRUBBED if scrub else "as the pool wrote it",
             "built_at": datetime.now(timezone.utc).isoformat(),
             "source": pool["source"],
+            **({'sampling_provenance':pool['sampling_provenance']} if 'sampling_provenance' in pool else {}),
         },
         schema_version=SCHEMA_VERSION,
     ).to_json()
@@ -684,6 +720,10 @@ def main() -> None:
         help="restrict --make-pool to one APPS tier; the default draws across all of them",
     )
     parser.add_argument("--seed", type=int, default=PROJECT_SEED)
+    parser.add_argument('--hf-revision', default=None,
+                        help='--make-pool only: immutable 40-hex Hugging Face commit SHA')
+    parser.add_argument('--exclude-pool', action='append', default=[],
+                        help='--make-pool only: exclude task IDs from this pool before sampling; repeatable')
     parser.add_argument(
         "--scrub-tells",
         action="store_true",
@@ -693,8 +733,11 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.make_pool:
-        write_pool(args.make_pool, args.seed, Path(args.pool), args.difficulty)
+        write_pool(args.make_pool, args.seed, Path(args.pool), args.difficulty,
+                   revision=args.hf_revision, exclude_pools=tuple(Path(p) for p in args.exclude_pool))
         return
+    if args.hf_revision is not None or args.exclude_pool:
+        parser.error('--hf-revision and --exclude-pool require --make-pool')
     if args.make_split:
         if not args.split:
             parser.error("--split names the file --make-split writes")

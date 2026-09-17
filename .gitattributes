@@ -1,1 +1,8 @@
 runs/** -whitespace
+# Frozen experiment manifests hash bytes; preserve them across Windows/Linux clones.
+pipeline/** -text whitespace=cr-at-eol
+prompts/** -text whitespace=cr-at-eol
+build_dataset.py -text whitespace=cr-at-eol
+data/** -text -whitespace
+runs/** -text
+apps_pool_confirmatory31.json -text -whitespace

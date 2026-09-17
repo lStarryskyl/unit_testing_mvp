@@ -275,8 +275,16 @@ def _stream(text: str) -> tuple[dict[str, Any] | None, str]:
 
 
 def kill_group(proc: subprocess.Popen) -> None:
+    """Reap the host process after its container was stopped on the Docker path.
+
+    POSIX kills the process group. Windows kills only the Docker CLI; the caller
+    must stop the named container first. This is not Windows process-tree isolation.
+    """
     try:
-        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        if os.name == "nt":
+            proc.kill()
+        else:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
     except (ProcessLookupError, PermissionError):
         pass
     try:
