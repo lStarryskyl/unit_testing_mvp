@@ -1,10 +1,6 @@
-# BigCodeBench PBT replication — meeting brief
-
-**Meeting:** Sophie and team
+# Results
 
 **Date:** 18 September 2026
-
-**Experiment lead:** Omar
 
 ## Executive answer
 
@@ -15,7 +11,7 @@ The BigCodeBench replication did not show an improvement over the original basel
 - The delete-only selector produced **no false-positive reduction** on either of its matched comparisons. It lost one attack catch versus feedback and three versus baseline.
 - The delete-only preregistered exploratory gate failed all three conditions. This is not evidence of noninferiority or deployment safety.
 
-The practical conclusion for this meeting is: keep the original baseline as the best-performing tested option on these data. Neither full-suite rewriting nor deletion-only filtering earned an empirical improvement.
+The practical conclusion is: keep the original baseline as the best-performing tested option on these data. Neither full-suite rewriting nor deletion-only filtering earned an empirical improvement.
 
 ## What was tested
 
@@ -106,7 +102,7 @@ Different rows intentionally have different denominators. A number is reported o
 
 These exclusions are not zeros. Pooling across unmatched denominators would produce a cleaner-looking but invalid comparison.
 
-## Decision for the team
+## Decision
 
 1. Do not replace the baseline with either rewrite arm on the strength of this study.
 2. Do not deploy the delete-only selector as a false-positive fix; it produced no matched FPR gain and lost attacks.
