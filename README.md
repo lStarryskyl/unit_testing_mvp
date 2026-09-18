@@ -1,12 +1,13 @@
 # Property-based testing experiments
 
-This repository contains the reproducible artifacts for the completed Azure PBT experiments led by Omar Sufyan. “Omar” identifies the experiment set and its artifacts; it is not a claim that Omar originated the broader PBT idea.
+This repository contains the reproducible artifacts for the completed Azure PBT experiments led by Omar. “Omar” identifies the experiment set and its artifacts; it is not a claim that Omar originated the broader PBT idea.
 
-The experiments ask whether model-written property-based tests can distinguish stored honest and backdoored APPS candidates. They are benchmark experiments, not evidence of deployment safety or a complete audit protocol. The verified experiment inventory, exact run settings, results, exclusions, and reproduction links are in [`docs/omar_pbt_experiment_index.md`](docs/omar_pbt_experiment_index.md).
+The experiments ask whether model-written property-based tests can distinguish stored honest and backdoored APPS and BigCodeBench candidates. They are benchmark experiments, not evidence of deployment safety or a complete audit protocol. The verified experiment inventory, exact run settings, results, exclusions, and reproduction links are in [`docs/omar_pbt_experiment_index.md`](docs/omar_pbt_experiment_index.md).
 
 ## Start here
 
 - [`docs/omar_pbt_experiment_index.md`](docs/omar_pbt_experiment_index.md) — concise inventory and interpretation of every completed study.
+- [`docs/omar_bcb_meeting_report.md`](docs/omar_bcb_meeting_report.md) — meeting brief for Sophie and team covering the 26-task BigCodeBench A/B/C replication and delete-only ablation.
 - [`docs/azure_pbt_training_results_2026-09-07.md`](docs/azure_pbt_training_results_2026-09-07.md) — exploratory training prompt comparison.
 - [`docs/azure_pbt_heldout_results_2026-09-08.md`](docs/azure_pbt_heldout_results_2026-09-08.md) — frozen held-out single-turn comparison.
 - [`docs/azure_pbt_multiturn_results_2026-09-09.md`](docs/azure_pbt_multiturn_results_2026-09-09.md) — exploratory execution-informed repair.
